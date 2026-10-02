@@ -5,10 +5,7 @@ import { USER_REPOSITORY, type UserRepositoryPort } from "../../domain/ports/Use
 import { randomUUID } from "crypto";
 
 
-
-
-
-///
+///Crear los datos
 
 @Injectable()
 export class CreateUserUseCase {
@@ -24,7 +21,7 @@ export class CreateUserUseCase {
                 status: userProps.status,
                 Roles: userProps.Roles
             });
-            
+
             return await this.userRepository.createUser(user);
         }
 }
