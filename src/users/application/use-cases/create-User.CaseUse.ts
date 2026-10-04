@@ -22,15 +22,22 @@ export class CreateUserUseCase {
 
 
         async execute(userProps: UserInput): Promise<User> {
-            const user = new User({
+
+           
+                const user = new User({
                 id :randomUUID(),
                 name: userProps.name,
                 email: userProps.email,
                 password: userProps.password,
                 status: true,
                 Roles: [Role.USER]
+
             });
 
             return await this.userRepository.createUser(user);
+
+
+        
+
         }
 }
