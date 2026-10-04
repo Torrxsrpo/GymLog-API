@@ -12,70 +12,64 @@ export interface UserProps{
 }
 
 export class User{
-    private id: string;
-    private name: string;
-    private email: string;
-    private password: string;
-    private status: boolean;
-    private Roles: Role[];
+     constructor(private props: UserProps){
+        this.validateEmail(props.email);
+        this.validatePassword(props.password);
+     }
 
-    constructor(props: UserProps){
-        this.setId(props.id);
-        this.setName(props.name);
-        this.setEmail(props.email);
-        this.setPassword(props.password);
-        this.setStatus(props.status);
-        this.setRoles(props.Roles);
-    }
+
+   
+
+   
 
     get Id(): string {
-        return this.id;
+        return this.props.id;
     }
 
     setId(id: string): void {
-        this.id = id;
+        this.props.id = id;
     }
 
     getName(): string {
-        return this.name;
+        return this.props.name;
     }
 
     setName(name: string): void {
-        this.name = name;
+        this.props.name = name;
     }
 
     getEmail(): string {
-        return this.email;
+        return this.props.email;
     }
 
     setEmail(email: string): void {
         this.validateEmail(email);
-        this.email = email;
+        this.props.email = email;
     }
 
     getPassword(): string {
-        return this.password;
+        return this.props.password;
     }
 
     setPassword(password: string): void {
         this.validatePassword(password);
-        this.password = password;
+        this.props.password = password;
     }
 
     getStatus(): boolean {
-        return this.status;
+        return this.props.status;
     }
 
     setStatus(status: boolean): void {
-        this.status = status;
+        this.props.status = status;
     }
 
     getRoles(): Role[] {
-        return this.Roles;
+        return this.props.Roles;
     }
 
     setRoles(roles: Role[]): void {
-        this.Roles = roles;
+        this.props.Roles = roles;
     }
 
     validatePassword(password: string){

@@ -9,7 +9,7 @@ import { Repository } from "typeorm";
 
 
 
-class  UserRepositoryAdapter implements UserRepositoryPort {
+export class  UserRepositoryAdapter implements UserRepositoryPort {
 
     constructor(
     @InjectRepository(UserOrmEntity)
