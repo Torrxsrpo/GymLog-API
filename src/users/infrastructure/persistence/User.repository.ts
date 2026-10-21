@@ -18,7 +18,7 @@ export class  UserRepositoryAdapter implements UserRepositoryPort {
 
         async createUser(user: User): Promise<User> {
             const UserOrm = userMapper.toOrm(user);
-            return userMapper.toDomain(await this.repository.create(UserOrm));
+            return userMapper.toDomain(await this.repository.save(UserOrm));
         }
 
 

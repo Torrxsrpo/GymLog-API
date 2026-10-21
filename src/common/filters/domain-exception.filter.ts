@@ -3,7 +3,8 @@ import type { Response } from 'express';
 
 const DOMAIN_ERRORS = [
 'EmailException',
-'PasswordLengthException'
+'PasswordLengthException',
+'PasswordFormatException'
 ];
 
 @Catch(Error)
