@@ -1,26 +1,19 @@
 import { Role } from "./enums/Role.enum.js";
-import { PasswordLengthException } from  "../errors/PasswordLengthException.js";
-import { EmailException } from "../errors/EmailException.js";
+import { Email } from "../value-objects/Email.vo.js";
+import { Password } from "../value-objects/Password.vo.js";
 
 export interface UserProps{
     id: string;
     name: string;
-    email: string;
-    password: string;
+    email: Email;
+    password: Password;
     status: boolean;
     Roles: Role[];
 }
 
 export class User{
-     constructor(private props: UserProps){
-        this.validateEmail(props.email);
-        this.validatePassword(props.password);
-     }
+     constructor(private props: UserProps){}
 
-
-   
-
-   
 
     get Id(): string {
         return this.props.id;
@@ -38,21 +31,19 @@ export class User{
         this.props.name = name;
     }
 
-    getEmail(): string {
+    getEmail(): Email {
         return this.props.email;
     }
 
-    setEmail(email: string): void {
-        this.validateEmail(email);
+    setEmail(email: Email): void {
         this.props.email = email;
     }
 
-    getPassword(): string {
+    getPassword(): Password {
         return this.props.password;
     }
 
-    setPassword(password: string): void {
-        this.validatePassword(password);
+    setPassword(password: Password): void {
         this.props.password = password;
     }
 
@@ -70,19 +61,5 @@ export class User{
 
     setRoles(roles: Role[]): void {
         this.props.Roles = roles;
-    }
-
-    validatePassword(password: string){
-        if (password.length < 8) {
-            throw new PasswordLengthException("Password must be at least 8 characters long.");
-        }
-
-    }
-
-    validateEmail(email: string) {
-        const userEmail = email.includes('@');
-        if (!userEmail) {
-            throw new EmailException("Invalid email address.");
-        }
     }
 }
