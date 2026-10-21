@@ -13,7 +13,7 @@ export class userMapper {
       id: orm.id,
       name: orm.name,
       email: Email.create(orm.email),
-      password: Password.create(orm.password),
+      password: Password.fromHash(orm.password),
       status: orm.status,
       Roles: orm.Roles
     });

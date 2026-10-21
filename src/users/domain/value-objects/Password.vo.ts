@@ -39,6 +39,15 @@ export class Password {
         return new Password(password);
     }
 
+    // Reconstruye una contraseña ya hasheada (p. ej. desde la BD), sin aplicar las reglas de formato
+    static fromHash(hashedPassword: string): Password {
+        if (hashedPassword === undefined || hashedPassword === null || hashedPassword.length === 0) {
+            throw new PasswordFormatException("Password hash is required.");
+        }
+
+        return new Password(hashedPassword);
+    }
+
     getValue(): string {
         return this.value;
     }
