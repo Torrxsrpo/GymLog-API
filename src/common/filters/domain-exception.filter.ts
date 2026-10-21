@@ -1,11 +1,12 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import type { Response } from 'express';
 
-const DOMAIN_ERRORS = [
-'EmailException',
-'PasswordLengthException',
-'PasswordFormatException'
-];
+const DOMAIN_ERRORS: Record<string, HttpStatus> = {
+  EmailException: HttpStatus.BAD_REQUEST,
+  PasswordLengthException: HttpStatus.BAD_REQUEST,
+  PasswordFormatException: HttpStatus.BAD_REQUEST,
+  InvalidCredentialsException: HttpStatus.UNAUTHORIZED,
+};
 
 @Catch(Error)
 export class DomainExceptionFilter implements ExceptionFilter {
@@ -18,7 +19,7 @@ export class DomainExceptionFilter implements ExceptionFilter {
       return;
     }
 
-    const status = DOMAIN_ERRORS.includes(exception.name) ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
+    const status = DOMAIN_ERRORS[exception.name] ?? HttpStatus.INTERNAL_SERVER_ERROR;
 
     response.status(status).json({
       statusCode: status,

@@ -7,5 +7,7 @@ export default defineConfig({
     globals: true,
     root: './',
     include: ['**/*.e2e-spec.ts'],
+    // Los e2e comparten la misma BD: se ejecutan en serie para evitar choques al sincronizar el esquema
+    fileParallelism: false,
   },
 });

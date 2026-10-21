@@ -107,5 +107,15 @@ describe('User', () => {
     ])('lanza PasswordFormatException si la contraseña %s', (_caso, password) => {
       expect(() => Password.create(password)).toThrow(PasswordFormatException);
     });
+
+    it('fromHash reconstruye un hash sin aplicar las reglas de formato', () => {
+      const hash = '$2b$10$abcdefghijklmnopqrstuuvwxyz0123456789abcdefghijklmnop';
+
+      expect(Password.fromHash(hash).getValue()).toBe(hash);
+    });
+
+    it('fromHash lanza PasswordFormatException si el hash está vacío', () => {
+      expect(() => Password.fromHash('')).toThrow(PasswordFormatException);
+    });
   });
 });
