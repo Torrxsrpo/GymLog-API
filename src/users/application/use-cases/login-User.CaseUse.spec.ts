@@ -39,7 +39,7 @@ describe('LoginUserUseCase', () => {
     it('devuelve el usuario y el token', async () => {
       const { user, accessToken } = await useCase.execute(credentials);
 
-      expect(user.Id).toBe('user-id');
+      expect(user.id).toBe('user-id');
       expect(accessToken).toBe('fake.jwt.token');
     });
 

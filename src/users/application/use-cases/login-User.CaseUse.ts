@@ -1,20 +1,15 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { User } from "../../domain/models/User.entity.js";
 import { USER_REPOSITORY, type UserRepositoryPort } from "../../domain/ports/UserRepository.port.js";
 import { TOKEN_SERVICE, type TokenServicePort } from "../../domain/ports/TokenService.port.js";
 import { PASSWORD_HASHER, type PasswordHasherPort } from "../../domain/ports/PasswordHasher.port.js";
 import { Email } from "../../domain/value-objects/Email.vo.js";
 import { EmailException } from "../../domain/errors/EmailException.js";
 import { InvalidCredentialsException } from "../../domain/errors/InvalidCredentialsException.js";
+import { toAuthResponse, type AuthResponse } from "../dtos/AuthResponse.js";
 
 interface LoginInput {
     email: string;
     password: string;
-}
-
-export interface LoginOutput {
-    user: User;
-    accessToken: string;
 }
 
 @Injectable()
@@ -24,7 +19,7 @@ export class LoginUserUseCase {
         @Inject (TOKEN_SERVICE) private readonly tokenService: TokenServicePort,
         @Inject (PASSWORD_HASHER) private readonly passwordHasher: PasswordHasherPort) {}
 
-    async execute(credentials: LoginInput): Promise<LoginOutput> {
+    async execute(credentials: LoginInput): Promise<AuthResponse> {
         const email = this.parseEmail(credentials.email);
 
         const user = await this.userRepository.findByEmail(email);
@@ -45,7 +40,7 @@ export class LoginUserUseCase {
             roles: user.getRoles(),
         });
 
-        return { user, accessToken };
+        return toAuthResponse(user, accessToken);
     }
 
     private parseEmail(email: string): Email {

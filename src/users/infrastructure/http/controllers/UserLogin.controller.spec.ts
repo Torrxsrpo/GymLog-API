@@ -1,22 +1,11 @@
 import { UserLoginController } from './UserLogin.controller.js';
 import { CreateUserUseCase } from '../../../application/use-cases/create-User.CaseUse.js';
 import { LoginUserUseCase } from '../../../application/use-cases/login-User.CaseUse.js';
-import { User } from '../../../domain/models/User.entity.js';
 import { Role } from '../../../domain/models/enums/Role.enum.js';
-import { Email } from '../../../domain/value-objects/Email.vo.js';
-import { Password } from '../../../domain/value-objects/Password.vo.js';
 import { EmailException } from '../../../domain/errors/EmailException.js';
 import { InvalidCredentialsException } from '../../../domain/errors/InvalidCredentialsException.js';
 
 describe('UserLoginController', () => {
-  const user = new User({
-    id: 'user-id',
-    name: 'Emmanuel',
-    email: Email.create('emmanuel@test.com'),
-    password: Password.fromHash('$2b$10$hashedpassword'),
-    status: true,
-    Roles: [Role.USER],
-  });
   const expectedResponse = {
     user: {
       id: 'user-id',
@@ -33,8 +22,8 @@ describe('UserLoginController', () => {
   let controller: UserLoginController;
 
   beforeEach(() => {
-    createUserUseCase = { execute: vi.fn(async () => ({ user, accessToken: 'fake.jwt.token' })) };
-    loginUserUseCase = { execute: vi.fn(async () => ({ user, accessToken: 'fake.jwt.token' })) };
+    createUserUseCase = { execute: vi.fn(async () => expectedResponse) };
+    loginUserUseCase = { execute: vi.fn(async () => expectedResponse) };
     controller = new UserLoginController(
       createUserUseCase as unknown as CreateUserUseCase,
       loginUserUseCase as unknown as LoginUserUseCase,
