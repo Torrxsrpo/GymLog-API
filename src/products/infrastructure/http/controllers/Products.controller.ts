@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards } from "@nestjs/common";
 import { GetProductsUseCase } from "../../../application/use-cases/get-Products.CaseUse.js";
-import { JwtAuthGuard } from "../../../../common/guards/jwt-auth.guard.js";
+import { JwtAuthGuard } from "../../../../auth/infrastructure/guards/jwt-auth.guard.js";
 
 @Controller('products')
 @UseGuards(JwtAuthGuard)

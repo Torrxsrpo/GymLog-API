@@ -1,13 +1,13 @@
 
 import { Inject, Injectable } from "@nestjs/common";
-import { User} from "../../domain/models/User.entity.js";
-import { USER_REPOSITORY, type UserRepositoryPort } from "../../domain/ports/UserRepository.port.js";
+import { User} from "../../../users/domain/models/User.entity.js";
+import { USER_REPOSITORY, type UserRepositoryPort } from "../../../users/domain/ports/UserRepository.port.js";
 import { TOKEN_SERVICE, type TokenServicePort } from "../../domain/ports/TokenService.port.js";
 import { PASSWORD_HASHER, type PasswordHasherPort } from "../../domain/ports/PasswordHasher.port.js";
 import { randomUUID } from "crypto";
-import { Role } from "../../domain/models/enums/Role.enum.js";
-import { Email } from "../../domain/value-objects/Email.vo.js";
-import { Password } from "../../domain/value-objects/Password.vo.js";
+import { Role } from "../../../users/domain/models/enums/Role.enum.js";
+import { Email } from "../../../users/domain/value-objects/Email.vo.js";
+import { Password } from "../../../users/domain/value-objects/Password.vo.js";
 import { toAuthResponse, type AuthResponse } from "../dtos/AuthResponse.js";
 
 

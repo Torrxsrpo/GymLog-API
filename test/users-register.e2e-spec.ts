@@ -10,7 +10,7 @@ import { DomainExceptionFilter } from './../src/common/filters/domain-exception.
 import { UserOrmEntity } from './../src/users/infrastructure/persistence/UserOrm.entity.js';
 import { Role } from './../src/users/domain/models/enums/Role.enum.js';
 
-describe('POST /users/register (e2e)', () => {
+describe('POST /auth/register (e2e)', () => {
   let app: INestApplication;
   let usersRepository: Repository<UserOrmEntity>;
   let jwtService: JwtService;
@@ -50,7 +50,7 @@ describe('POST /users/register (e2e)', () => {
     it('responde 201 con el usuario y el token', async () => {
       const body = validBody();
 
-      const response = await request(app.getHttpServer()).post('/users/register').send(body).expect(201);
+      const response = await request(app.getHttpServer()).post('/auth/register').send(body).expect(201);
 
       expect(response.body).toEqual({
         user: {
@@ -65,7 +65,7 @@ describe('POST /users/register (e2e)', () => {
     });
 
     it('no devuelve la contraseña', async () => {
-      const response = await request(app.getHttpServer()).post('/users/register').send(validBody()).expect(201);
+      const response = await request(app.getHttpServer()).post('/auth/register').send(validBody()).expect(201);
 
       expect(response.body.user).not.toHaveProperty('password');
       expect(JSON.stringify(response.body)).not.toContain('Abcdef12');
@@ -74,7 +74,7 @@ describe('POST /users/register (e2e)', () => {
     it('devuelve un JWT válido con el id, email y roles del usuario', async () => {
       const body = validBody();
 
-      const response = await request(app.getHttpServer()).post('/users/register').send(body).expect(201);
+      const response = await request(app.getHttpServer()).post('/auth/register').send(body).expect(201);
 
       const payload = await jwtService.verifyAsync(response.body.accessToken);
       expect(payload).toMatchObject({
@@ -88,7 +88,7 @@ describe('POST /users/register (e2e)', () => {
     it('guarda el usuario en la base de datos', async () => {
       const body = validBody();
 
-      const response = await request(app.getHttpServer()).post('/users/register').send(body).expect(201);
+      const response = await request(app.getHttpServer()).post('/auth/register').send(body).expect(201);
 
       const saved = await usersRepository.findOneBy({ id: response.body.user.id });
       expect(saved).toMatchObject({
@@ -102,7 +102,7 @@ describe('POST /users/register (e2e)', () => {
     it('guarda la contraseña hasheada con bcrypt, no en texto plano', async () => {
       const body = validBody();
 
-      const response = await request(app.getHttpServer()).post('/users/register').send(body).expect(201);
+      const response = await request(app.getHttpServer()).post('/auth/register').send(body).expect(201);
 
       const saved = await usersRepository.findOneBy({ id: response.body.user.id });
       expect(saved?.password).not.toBe(body.password);
@@ -113,7 +113,7 @@ describe('POST /users/register (e2e)', () => {
       const email = uniqueEmail();
 
       const response = await request(app.getHttpServer())
-        .post('/users/register')
+        .post('/auth/register')
         .send({ name: 'Emmanuel', email: `  ${email.toUpperCase()} `, password: 'Abcdef12' })
         .expect(201);
 
@@ -125,7 +125,7 @@ describe('POST /users/register (e2e)', () => {
       const body = validBody();
 
       const response = await request(app.getHttpServer())
-        .post('/users/register')
+        .post('/auth/register')
         .send({ ...body, Roles: [Role.ADMIN], status: false })
         .expect(201);
 
@@ -144,7 +144,7 @@ describe('POST /users/register (e2e)', () => {
     ])('responde 400 si %s y no guarda nada', async (_caso, override, error) => {
       const body = { ...validBody(), ...override };
 
-      const response = await request(app.getHttpServer()).post('/users/register').send(body).expect(400);
+      const response = await request(app.getHttpServer()).post('/auth/register').send(body).expect(400);
 
       expect(response.body).toMatchObject({ statusCode: 400, error });
       expect(response.body).not.toHaveProperty('accessToken');
@@ -161,7 +161,7 @@ describe('POST /users/register (e2e)', () => {
       ['el email no es un string', { email: 123 }],
     ])('responde 400 si %s', async (_caso, override) => {
       const response = await request(app.getHttpServer())
-        .post('/users/register')
+        .post('/auth/register')
         .send({ ...validBody(), ...override })
         .expect(400);
 
@@ -170,16 +170,16 @@ describe('POST /users/register (e2e)', () => {
     });
 
     it('responde 400 si el body está vacío', async () => {
-      await request(app.getHttpServer()).post('/users/register').send({}).expect(400);
+      await request(app.getHttpServer()).post('/auth/register').send({}).expect(400);
     });
   });
 
   describe('cuando el email ya está registrado', () => {
     it('no crea un segundo usuario ni devuelve token', async () => {
       const body = validBody();
-      await request(app.getHttpServer()).post('/users/register').send(body).expect(201);
+      await request(app.getHttpServer()).post('/auth/register').send(body).expect(201);
 
-      const response = await request(app.getHttpServer()).post('/users/register').send(body);
+      const response = await request(app.getHttpServer()).post('/auth/register').send(body);
 
       expect(response.status).not.toBe(201);
       expect(response.body).not.toHaveProperty('accessToken');

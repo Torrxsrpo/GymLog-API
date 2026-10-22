@@ -15,17 +15,17 @@ npm run start:dev          # corre los tests unitarios y arranca en http://local
 
 | Método | Ruta              | Body / Header                          |
 | ------ | ----------------- | -------------------------------------- |
-| POST   | `/users/register` | `{ "name", "email", "password" }`      |
-| POST   | `/users/login`    | `{ "email", "password" }`              |
+| POST   | `/auth/register` | `{ "name", "email", "password" }`      |
+| POST   | `/auth/login`    | `{ "email", "password" }`              |
 | GET    | `/products`       | `Authorization: Bearer <accessToken>`  |
 
 ```bash
 # Registrarse
-curl -X POST http://localhost:3000/users/register -H "Content-Type: application/json" \
+curl -X POST http://localhost:3000/auth/register -H "Content-Type: application/json" \
   -d '{"name":"Emmanuel","email":"emmanuel@test.com","password":"Abcdef12"}'
 
 # Login (devuelve accessToken; credenciales incorrectas → 401)
-curl -X POST http://localhost:3000/users/login -H "Content-Type: application/json" \
+curl -X POST http://localhost:3000/auth/login -H "Content-Type: application/json" \
   -d '{"email":"emmanuel@test.com","password":"Abcdef12"}'
 
 # Ver productos con el token

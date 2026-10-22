@@ -1,28 +1,40 @@
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from './jwt-auth.guard.js';
+import { JwtStrategy } from '../strategies/jwt.strategy.js';
 
 describe('JwtAuthGuard', () => {
   const secret = 'test-secret';
   const jwtService = new JwtService({ secret });
-  const guard = new JwtAuthGuard(jwtService);
+  // Instanciar la strategy la registra en passport bajo el nombre 'jwt'
+  new JwtStrategy(new ConfigService({ JWT_SECRET: secret }));
+  const guard = new JwtAuthGuard();
 
   const buildContext = (authorization?: string) => {
     const request: { headers: Record<string, string | undefined>; user?: unknown } = {
       headers: { authorization },
     };
     const context = {
-      switchToHttp: () => ({ getRequest: () => request }),
+      switchToHttp: () => ({ getRequest: () => request, getResponse: () => ({}) }),
     } as unknown as ExecutionContext;
     return { context, request };
   };
 
   it('permite el acceso con un token válido y guarda el payload en request.user', async () => {
-    const token = await jwtService.signAsync({ sub: 'user-id', email: 'emmanuel@test.com' });
+    const token = await jwtService.signAsync({ sub: 'user-id', email: 'emmanuel@test.com', roles: ['USER'] });
     const { context, request } = buildContext(`Bearer ${token}`);
 
     await expect(guard.canActivate(context)).resolves.toBe(true);
-    expect(request.user).toMatchObject({ sub: 'user-id', email: 'emmanuel@test.com' });
+    expect(request.user).toEqual({ sub: 'user-id', email: 'emmanuel@test.com', roles: ['USER'] });
+  });
+
+  it('solo expone sub, email y roles en request.user', async () => {
+    const token = await jwtService.signAsync({ sub: 'user-id', email: 'emmanuel@test.com', roles: ['USER'], extra: 'x' });
+    const { context, request } = buildContext(`Bearer ${token}`);
+
+    await guard.canActivate(context);
+    expect(request.user).not.toHaveProperty('extra');
   });
 
   it.each([

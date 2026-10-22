@@ -6,8 +6,8 @@ import { LoginUserUseCase } from "../../../application/use-cases/login-User.Case
 
 
 
-@Controller('users')
-export class UserLoginController {
+@Controller('auth')
+export class AuthController {
     constructor(
                 private readonly createUserUseCase: CreateUserUseCase,
                 private readonly loginUserUseCase: LoginUserUseCase
@@ -19,13 +19,13 @@ export class UserLoginController {
 
     @Post('register')
     @HttpCode(HttpStatus.CREATED)
-    async createuser(@Body() createUserDto: RegisterUserDto ) {
+    createuser(@Body() createUserDto: RegisterUserDto ) {
         return this.createUserUseCase.execute(createUserDto);
     }
 
     @Post('login')
     @HttpCode(HttpStatus.OK)
-    async login(@Body() loginDto: userloginDto ) {
+    login(@Body() loginDto: userloginDto ) {
         return this.loginUserUseCase.execute(loginDto);
     }
 }

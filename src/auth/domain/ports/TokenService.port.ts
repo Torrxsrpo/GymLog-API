@@ -1,4 +1,4 @@
-import { Role } from "../models/enums/Role.enum.js";
+import { Role } from "../../../users/domain/models/enums/Role.enum.js";
 
 export const TOKEN_SERVICE = Symbol('TOKEN_SERVICE');
 
