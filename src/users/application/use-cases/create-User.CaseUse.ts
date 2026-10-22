@@ -8,6 +8,7 @@ import { randomUUID } from "crypto";
 import { Role } from "../../domain/models/enums/Role.enum.js";
 import { Email } from "../../domain/value-objects/Email.vo.js";
 import { Password } from "../../domain/value-objects/Password.vo.js";
+import { toAuthResponse, type AuthResponse } from "../dtos/AuthResponse.js";
 
 
 ///Crear los datos
@@ -16,11 +17,6 @@ interface UserInput {
     name: string;
     email: string;
     password: string;
-}
-
-export interface CreateUserOutput {
-    user: User;
-    accessToken: string;
 }
 
 @Injectable()
@@ -32,7 +28,7 @@ export class CreateUserUseCase {
 
 
 
-        async execute(userProps: UserInput): Promise<CreateUserOutput> {
+        async execute(userProps: UserInput): Promise<AuthResponse> {
 
                 // Se validan las reglas de la contraseña en texto plano antes de hashearla
                 const email = Email.create(userProps.email);
@@ -51,13 +47,14 @@ export class CreateUserUseCase {
 
             const createdUser = await this.userRepository.createUser(user);
 
-            const accessToken = await this.tokenService.generateToken({
+            const payload = {
                 sub: createdUser.Id,
                 email: createdUser.getEmail().getValue(),
                 roles: createdUser.getRoles(),
-            });
+            }
+            const accessToken = await this.tokenService.generateToken(payload);
 
-            return { user: createdUser, accessToken };
+            return toAuthResponse(createdUser, accessToken);
 
         }
 }

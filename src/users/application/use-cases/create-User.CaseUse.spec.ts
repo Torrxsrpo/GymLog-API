@@ -33,7 +33,14 @@ describe('CreateUserUseCase', () => {
       const { user, accessToken } = await useCase.execute(input);
 
       expect(accessToken).toBe('fake.jwt.token');
-      expect(user).toBeInstanceOf(User);
+      expect(user).toEqual({
+        id: expect.any(String),
+        name: 'Emmanuel',
+        email: 'emmanuel@test.com',
+        status: true,
+        roles: [Role.USER],
+      });
+      expect(user).not.toHaveProperty('password');
       expect(userRepository.createUser).toHaveBeenCalledOnce();
     });
 
@@ -62,14 +69,14 @@ describe('CreateUserUseCase', () => {
     it('normaliza el email antes de guardarlo', async () => {
       const { user } = await useCase.execute({ ...input, email: '  Emmanuel@Test.COM ' });
 
-      expect(user.getEmail().getValue()).toBe('emmanuel@test.com');
+      expect(user.email).toBe('emmanuel@test.com');
     });
 
     it('genera un id distinto en cada registro', async () => {
       const first = await useCase.execute(input);
       const second = await useCase.execute(input);
 
-      expect(first.user.Id).not.toBe(second.user.Id);
+      expect(first.user.id).not.toBe(second.user.id);
     });
 
     it('genera el token con el id, email y roles del usuario', async () => {
@@ -77,7 +84,7 @@ describe('CreateUserUseCase', () => {
 
       expect(tokenService.generateToken).toHaveBeenCalledOnce();
       expect(tokenService.generateToken).toHaveBeenCalledWith({
-        sub: user.Id,
+        sub: user.id,
         email: 'emmanuel@test.com',
         roles: [Role.USER],
       });
@@ -96,7 +103,8 @@ describe('CreateUserUseCase', () => {
 
       const { user } = await useCase.execute(input);
 
-      expect(user).toBe(persisted);
+      expect(user.id).toBe('id-de-la-bd');
+      expect(user.roles).toEqual([Role.ADMIN]);
       expect(tokenService.generateToken).toHaveBeenCalledWith({
         sub: 'id-de-la-bd',
         email: 'emmanuel@test.com',
