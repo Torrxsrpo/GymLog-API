@@ -19,7 +19,7 @@ describe('Login y productos (e2e)', () => {
   const email = `e2e-${randomUUID()}@test.com`;
   const createdEmails: string[] = [email];
 
-  const login = (body: object) => request(app.getHttpServer()).post('/users/login').send(body);
+  const login = (body: object) => request(app.getHttpServer()).post('/auth/login').send(body);
   const getProducts = (token?: string) => {
     const req = request(app.getHttpServer()).get('/products');
     return token ? req.set('Authorization', `Bearer ${token}`) : req;
@@ -41,7 +41,7 @@ describe('Login y productos (e2e)', () => {
 
     // Usuario registrado con el que se prueba el login
     await request(app.getHttpServer())
-      .post('/users/register')
+      .post('/auth/register')
       .send({ name: 'Emmanuel', email, password })
       .expect(201);
   });
@@ -53,7 +53,7 @@ describe('Login y productos (e2e)', () => {
     await app?.close();
   });
 
-  describe('POST /users/login con credenciales correctas', () => {
+  describe('POST /auth/login con credenciales correctas', () => {
     it('responde 200 con el usuario y un token válido', async () => {
       const response = await login({ email, password }).expect(200);
 
@@ -102,7 +102,7 @@ describe('Login y productos (e2e)', () => {
     });
   });
 
-  describe('POST /users/login con credenciales incorrectas', () => {
+  describe('POST /auth/login con credenciales incorrectas', () => {
     it.each([
       ['la contraseña es incorrecta', () => ({ email, password: 'OtraPass99' })],
       ['la contraseña difiere solo en mayúsculas', () => ({ email, password: 'abcdef12' })],
@@ -122,7 +122,7 @@ describe('Login y productos (e2e)', () => {
       const inactiveEmail = `e2e-${randomUUID()}@test.com`;
       createdEmails.push(inactiveEmail);
       await request(app.getHttpServer())
-        .post('/users/register')
+        .post('/auth/register')
         .send({ name: 'Inactivo', email: inactiveEmail, password })
         .expect(201);
       await usersRepository.update({ email: inactiveEmail }, { status: false });

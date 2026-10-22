@@ -1,6 +1,6 @@
 import { JwtService } from '@nestjs/jwt';
 import { JwtTokenService } from './JwtToken.service.js';
-import { Role } from '../../domain/models/enums/Role.enum.js';
+import { Role } from '../../../users/domain/models/enums/Role.enum.js';
 
 describe('JwtTokenService', () => {
   const secret = 'test-secret';

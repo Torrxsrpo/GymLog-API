@@ -1,5 +1,5 @@
-import { User } from "../../domain/models/User.entity.js";
-import { Role } from "../../domain/models/enums/Role.enum.js";
+import { User } from "../../../users/domain/models/User.entity.js";
+import { Role } from "../../../users/domain/models/enums/Role.enum.js";
 
 export interface UserResponse {
     id: string;

@@ -1,11 +1,11 @@
-import { UserLoginController } from './UserLogin.controller.js';
+import { AuthController } from './Auth.controller.js';
 import { CreateUserUseCase } from '../../../application/use-cases/create-User.CaseUse.js';
 import { LoginUserUseCase } from '../../../application/use-cases/login-User.CaseUse.js';
-import { Role } from '../../../domain/models/enums/Role.enum.js';
-import { EmailException } from '../../../domain/errors/EmailException.js';
+import { Role } from '../../../../users/domain/models/enums/Role.enum.js';
+import { EmailException } from '../../../../users/domain/errors/EmailException.js';
 import { InvalidCredentialsException } from '../../../domain/errors/InvalidCredentialsException.js';
 
-describe('UserLoginController', () => {
+describe('AuthController', () => {
   const expectedResponse = {
     user: {
       id: 'user-id',
@@ -19,12 +19,12 @@ describe('UserLoginController', () => {
 
   let createUserUseCase: { execute: ReturnType<typeof vi.fn> };
   let loginUserUseCase: { execute: ReturnType<typeof vi.fn> };
-  let controller: UserLoginController;
+  let controller: AuthController;
 
   beforeEach(() => {
     createUserUseCase = { execute: vi.fn(async () => expectedResponse) };
     loginUserUseCase = { execute: vi.fn(async () => expectedResponse) };
-    controller = new UserLoginController(
+    controller = new AuthController(
       createUserUseCase as unknown as CreateUserUseCase,
       loginUserUseCase as unknown as LoginUserUseCase,
     );

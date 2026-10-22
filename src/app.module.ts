@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UsersModule } from './users/users.module.js';
+import { AuthModule } from './auth/auth.module.js';
 import { ProductsModule } from './products/products.module.js';
 
 
@@ -20,6 +21,7 @@ import { ProductsModule } from './products/products.module.js';
       synchronize: true,
     }),
     UsersModule,
+    AuthModule,
     ProductsModule,
     
     
