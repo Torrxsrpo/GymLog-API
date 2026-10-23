@@ -6,7 +6,6 @@ import { ProductOrmEntity } from './infrastructure/persistence/ProductOrm.entity
 import { ProductRepositoryAdapter } from './infrastructure/persistence/Product.repository.js';
 import { ProductSeeder } from './infrastructure/persistence/Product.seeder.js';
 import { ProductsController } from './infrastructure/http/controllers/Products.controller.js';
-import { JwtAuthGuard } from '../auth/infrastructure/guards/jwt-auth.guard.js';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ProductOrmEntity])],
@@ -17,7 +16,6 @@ import { JwtAuthGuard } from '../auth/infrastructure/guards/jwt-auth.guard.js';
 
     { provide: PRODUCT_REPOSITORY, useClass: ProductRepositoryAdapter },
     ProductSeeder,
-    JwtAuthGuard,
   ],
 })
 export class ProductsModule {}

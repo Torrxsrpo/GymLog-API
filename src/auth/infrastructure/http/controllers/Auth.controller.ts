@@ -3,9 +3,11 @@ import { userloginDto } from "../dtos/UserLogin.dto.js";
 import { RegisterUserDto } from "../dtos/RegisterUser.dto.js";
 import { CreateUserUseCase } from "../../../application/use-cases/create-User.CaseUse.js";
 import { LoginUserUseCase } from "../../../application/use-cases/login-User.CaseUse.js";
+import { Public } from "../../decorators/public.decorator.js";
 
 
-
+// Únicas rutas públicas de la API
+@Public()
 @Controller('auth')
 export class AuthController {
     constructor(

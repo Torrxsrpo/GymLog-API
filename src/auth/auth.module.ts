@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '../users/users.module.js';
@@ -11,15 +12,14 @@ import { AuthController } from './infrastructure/http/controllers/Auth.controlle
 import { JwtTokenService } from './infrastructure/security/JwtToken.service.js';
 import { BcryptPasswordHasher } from './infrastructure/security/BcryptPasswordHasher.service.js';
 import { JwtAuthGuard } from './infrastructure/guards/jwt-auth.guard.js';
+import { RolesGuard } from './infrastructure/guards/roles.guard.js';
 import { JwtStrategy } from './infrastructure/strategies/jwt.strategy.js';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule.register({defaultStrategy: 'jwt'}),
-    // Global para que otros módulos (p. ej. products) puedan usar JwtAuthGuard
     JwtModule.registerAsync({
-      global: true,
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: config.getOrThrow<string>('JWT_SECRET'),
@@ -36,8 +36,11 @@ import { JwtStrategy } from './infrastructure/strategies/jwt.strategy.js';
     { provide: TOKEN_SERVICE, useClass: JwtTokenService },
     { provide: PASSWORD_HASHER, useClass: BcryptPasswordHasher },
     JwtStrategy,
-    JwtAuthGuard,
+
+    // Guards globales: toda ruta exige token y rol USER salvo las marcadas con @Public()
+    // El orden importa: primero autentica JwtAuthGuard y luego autoriza RolesGuard
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
   ],
-  exports: [PassportModule, JwtModule, JwtAuthGuard],
 })
 export class AuthModule {}

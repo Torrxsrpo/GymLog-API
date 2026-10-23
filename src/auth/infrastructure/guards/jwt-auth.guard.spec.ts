@@ -1,6 +1,7 @@
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { Reflector } from '@nestjs/core';
 import { JwtAuthGuard } from './jwt-auth.guard.js';
 import { JwtStrategy } from '../strategies/jwt.strategy.js';
 
@@ -9,7 +10,10 @@ describe('JwtAuthGuard', () => {
   const jwtService = new JwtService({ secret });
   // Instanciar la strategy la registra en passport bajo el nombre 'jwt'
   new JwtStrategy(new ConfigService({ JWT_SECRET: secret }));
-  const guard = new JwtAuthGuard();
+  const reflector = new Reflector();
+  const guard = new JwtAuthGuard(reflector);
+
+  afterEach(() => vi.restoreAllMocks());
 
   const buildContext = (authorization?: string) => {
     const request: { headers: Record<string, string | undefined>; user?: unknown } = {
@@ -17,6 +21,8 @@ describe('JwtAuthGuard', () => {
     };
     const context = {
       switchToHttp: () => ({ getRequest: () => request, getResponse: () => ({}) }),
+      getHandler: () => () => undefined,
+      getClass: () => class {},
     } as unknown as ExecutionContext;
     return { context, request };
   };
@@ -61,5 +67,13 @@ describe('JwtAuthGuard', () => {
     const token = await jwtService.signAsync({ sub: 'user-id' }, { expiresIn: '-1s' });
 
     await expect(guard.canActivate(buildContext(`Bearer ${token}`).context)).rejects.toThrow(UnauthorizedException);
+  });
+
+  it('deja pasar sin token las rutas marcadas con @Public()', async () => {
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(true);
+    const { context, request } = buildContext();
+
+    expect(guard.canActivate(context)).toBe(true);
+    expect(request.user).toBeUndefined();
   });
 });
