@@ -4,6 +4,9 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { UsersModule } from './users/users.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { ProductsModule } from './products/products.module.js';
+import { ExercisesModule } from './exercises/exercises.module.js';
+import { RoutinesModule } from './routines/routines.module.js';
+import { WorkoutsModule } from './workouts/workouts.module.js';
 
 
 
@@ -23,6 +26,9 @@ import { ProductsModule } from './products/products.module.js';
     UsersModule,
     AuthModule,
     ProductsModule,
+    ExercisesModule,
+    RoutinesModule,
+    WorkoutsModule,
     
     
   ],
